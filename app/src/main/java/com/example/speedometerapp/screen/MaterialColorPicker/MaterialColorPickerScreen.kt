@@ -50,6 +50,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.speedometerapp.R
 import com.example.speedometerapp.screen.SpeedoMeter.SpeedometerApp
+import com.example.speedometerapp.ui.composable.AppImage
 import kotlin.math.roundToInt
 
 @Composable
@@ -77,14 +78,7 @@ fun ColorPicker(modifier: Modifier) {
     ) {
 
         item {
-            ElevatedCard() {
-                Image(
-                    painter = painterResource(R.drawable.material_color_picker),
-                    contentDescription = "Length Converter Image",
-                    contentScale = ContentScale.FillBounds,
-                    modifier = Modifier.size(120.dp)
-                )
-            }
+            AppImage(modifier = Modifier, R.drawable.material_color_picker)
         }
         item {
             // Display the current color in a Box with a MaterialTheme shape

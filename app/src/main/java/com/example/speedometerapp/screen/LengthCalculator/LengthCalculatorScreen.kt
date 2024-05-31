@@ -41,6 +41,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.speedometerapp.R
 import com.example.speedometerapp.screen.LengthCalculator.LengthUnit.*
+import com.example.speedometerapp.ui.composable.AppImage
 
 @Composable
 fun LengthCalculatorScreen(modifier: Modifier, onBackPress: () -> Unit) {
@@ -74,12 +75,8 @@ fun LengthCalculatorScreen(modifier: Modifier, onBackPress: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(Modifier.height(16.dp))
-        Image(
-            painter = painterResource(R.drawable.length_converter),
-            contentDescription = "Length Converter Image",
-            contentScale = ContentScale.FillBounds,
-            modifier = Modifier.size(180.dp)
-        )
+        AppImage(modifier = Modifier.size(120.dp), R.drawable.length_converter)
+
         Spacer(modifier = Modifier.height(30.dp))
         Row(
             Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -170,7 +167,7 @@ fun LengthUnitSelector(
 
 
 @Composable
-fun IncreaseDecreaseIconButton(
+private fun IncreaseDecreaseIconButton(
     isIncrease: Boolean,
 ) {
     Icon(
@@ -181,7 +178,7 @@ fun IncreaseDecreaseIconButton(
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun PreviewLengthCalculatorScreen() {
+private fun PreviewLengthCalculatorScreen() {
     LengthCalculatorScreen(Modifier.fillMaxSize()) {}
 }
 

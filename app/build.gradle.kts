@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.24"
 }
 
 android {
@@ -40,7 +41,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.14"
     }
     packaging {
         resources {
@@ -59,6 +60,16 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.accompanist.navigation.material)
+
+    val navigationVersion = "2.8.0-alpha08"
+    val navigation = "androidx.navigation:navigation-compose:$navigationVersion"
+    implementation(navigation)
+
+    val serializationVersion = "1.6.3"
+    val serialization =
+        "org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion"
+    implementation(serialization)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
