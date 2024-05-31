@@ -1,6 +1,5 @@
 package com.example.speedometerapp.screen.LengthCalculator
 
-import android.widget.Space
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -9,14 +8,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -24,7 +21,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -53,7 +50,6 @@ fun LengthCalculatorScreen(modifier: Modifier, onBackPress: () -> Unit) {
 
     var inputValue by remember { mutableStateOf("1") }
     var inputUnit by remember { mutableStateOf(Meters) }
-    var expendInput by remember { mutableStateOf(false) }
 
     var outputUnit by remember { mutableStateOf(Feet) }
     var expendOutput by remember { mutableStateOf(false) }
@@ -75,10 +71,8 @@ fun LengthCalculatorScreen(modifier: Modifier, onBackPress: () -> Unit) {
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Length Converter", style = MaterialTheme.typography.headlineLarge)
         Spacer(Modifier.height(16.dp))
         Image(
             painter = painterResource(R.drawable.length_converter),
@@ -110,84 +104,70 @@ fun LengthCalculatorScreen(modifier: Modifier, onBackPress: () -> Unit) {
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
         }
-        Row(modifier = Modifier.fillMaxWidth(1f)) {
-            Row(
-                Modifier
-                    .weight(1f)
-                    .background(Color.Gray.copy(alpha = 0.2f))
-                    .clickable {
-                        expendInput = true
-                    },
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                DropdownMenu(
-                    modifier = Modifier
-                        .height(300.dp)
-                        .wrapContentHeight(),
-                    expanded = expendInput,
-                    onDismissRequest = { expendInput = false },
-                ) {
-                    LengthUnit.entries.forEach { unit ->
-                        DropdownMenuItem(onClick = {
-                            inputUnit = unit
-                            expendInput = false
-                        }, text = { Text(text = unit.name) })
-                    }
-                }
-                Text(
-                    " $inputUnit", modifier = Modifier.padding(8.dp)
-                )
-                Spacer(Modifier.weight(1f))
-                Column(
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                ) {
-                    IncreaseDecreaseIconButton(true)
-                    IncreaseDecreaseIconButton(false)
-                }
-            }
+        Row(modifier = Modifier.fillMaxWidth()) {
+            LengthUnitSelector(
+                modifier = Modifier.weight(1f),
+                lengthUnit = inputUnit.name,
+                onUnitChange = { inputUnit = it }
+            )
             Text("=", style = MaterialTheme.typography.headlineLarge)
-            Row(
-                Modifier
-                    .weight(1f)
-                    .background(Color.Gray.copy(alpha = 0.2f))
-                    .clickable {
-                        expendOutput = true
-                    },
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                DropdownMenu(
-                    modifier = Modifier
-                        .height(300.dp)
-                        .wrapContentHeight(),
-                    expanded = expendOutput,
-                    onDismissRequest = { expendOutput = false },
-                ) {
-                    LengthUnit.entries.forEach { unit ->
-                        DropdownMenuItem(onClick = {
-                            outputUnit = unit
-                            expendOutput = false
-                        }, text = { Text(text = unit.name) })
-                    }
-                }
-                Text(
-                    " $outputUnit", modifier = Modifier.padding(8.dp)
-                )
-                Spacer(Modifier.weight(1f))
-                Column(
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                ) {
-                    IncreaseDecreaseIconButton(true)
-                    IncreaseDecreaseIconButton(false)
-                }
-
-            }
+            LengthUnitSelector(
+                modifier = Modifier.weight(1f),
+                lengthUnit = outputUnit.name,
+                onUnitChange = { outputUnit = it }
+            )
         }
         Spacer(modifier = Modifier.height(12.dp))
         Text(text = formulaMessage, style = MaterialTheme.typography.bodyLarge)
     }
 }
+
+@Composable
+fun LengthUnitSelector(
+    modifier: Modifier = Modifier,
+    lengthUnit: String,
+    onUnitChange: (LengthUnit) -> Unit
+) {
+
+    var expendInput by remember { mutableStateOf(false) }
+    ElevatedCard(modifier = modifier, shape = RoundedCornerShape(4.dp)) {
+        Row(
+            Modifier
+                .background(Color.Gray.copy(alpha = 0.2f))
+                .clickable {
+                    expendInput = true
+                },
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            DropdownMenu(
+                modifier = Modifier
+                    .height(300.dp)
+                    .wrapContentHeight(),
+                expanded = expendInput,
+                onDismissRequest = { expendInput = false },
+            ) {
+                LengthUnit.entries.forEach { unit ->
+                    DropdownMenuItem(onClick = {
+                        onUnitChange(unit)
+                        expendInput = false
+                    }, text = { Text(text = unit.name) })
+                }
+            }
+            Text(
+                " $lengthUnit", modifier = Modifier.padding(8.dp)
+            )
+            Spacer(Modifier.weight(1f))
+            Column(
+                modifier = Modifier.padding(horizontal = 16.dp)
+            ) {
+                IncreaseDecreaseIconButton(true)
+                IncreaseDecreaseIconButton(false)
+            }
+        }
+    }
+}
+
 
 @Composable
 fun IncreaseDecreaseIconButton(

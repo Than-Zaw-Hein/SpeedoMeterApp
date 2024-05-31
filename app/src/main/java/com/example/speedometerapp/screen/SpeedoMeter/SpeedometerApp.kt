@@ -52,7 +52,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.speedometerapp.Speed
+import com.example.speedometerapp.screen.SpeedoMeter.Speed
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -64,12 +64,10 @@ import kotlin.math.sin
 
 @Composable
 fun SpeedometerApp(modifier: Modifier, onBackPress: () -> Unit) {
-
     BackHandler { onBackPress() }
-    val coroutineScope = rememberCoroutineScope()
 
     val viewModel = remember { SpeedometerViewModel() }
-    var speed by remember { mutableIntStateOf(100) }
+    var speed by remember { mutableIntStateOf(0) }
     val animateSpeed by animateFloatAsState(speed.toFloat(), label = "Speed")
     var acceleration by remember { mutableIntStateOf(5) }
     var velocity by remember { mutableIntStateOf(10) }
@@ -107,7 +105,7 @@ fun SpeedometerApp(modifier: Modifier, onBackPress: () -> Unit) {
             .fillMaxSize()
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceEvenly
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         SpeedometerDial(animateSpeed, time)
         Text(
@@ -143,7 +141,7 @@ fun SpeedometerDial(
 //    val distanceInMiles = viewModel.convertKilometersToMiles(distance.toDouble())
     val onSurfaceColor = MaterialTheme.colorScheme.primary
     Box(
-        modifier = Modifier.size(180.dp), contentAlignment = Alignment.Center
+        modifier = Modifier.size(160.dp), contentAlignment = Alignment.Center
     ) {
         Canvas(modifier = Modifier.fillMaxSize()) {
             val radius = size.minDimension / 2
@@ -239,19 +237,22 @@ fun SpeedControlPanel(
                     ElevatedCard(
                         colors = if (selectedSpeed == speed) CardDefaults.cardColors(
                             containerColor = Color.Red
-                        ) else CardDefaults.cardColors()
+                        ) else CardDefaults.cardColors(),
+                        onClick = { onSpeedChange(speed) }
                     ) {
                         Box(
                             modifier = Modifier
-                                .width(75.dp)
-                                .height(80.dp)
+                                .width(70.dp)
+                                .height(70.dp)
                                 .padding(4.dp),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text(text = "${speed.value}km",
-                                fontSize = 18.sp,
+                            Text(
+                                text = "${speed.value}km",
+                                fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold,
-                                modifier = Modifier.clickable { onSpeedChange(speed) })
+                                modifier = Modifier
+                            )
                         }
                     }
                 }
