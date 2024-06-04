@@ -1,10 +1,14 @@
-package com.example.speedometerapp.screen.LengthCalculator
+package com.example.speedometerapp.screen.lengthCalculator
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.Image
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -34,38 +38,33 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.speedometerapp.R
-import com.example.speedometerapp.screen.LengthCalculator.LengthUnit.*
+import com.example.speedometerapp.screen.lengthCalculator.LengthUnit.*
 import com.example.speedometerapp.ui.composable.AppImage
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun LengthCalculatorScreen(modifier: Modifier, onBackPress: () -> Unit) {
-
-
+fun LengthCalculatorScreen(
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    modifier: Modifier,
+    onBackPress: () -> Unit
+) {
     BackHandler { onBackPress() }
-
     var inputValue by remember { mutableStateOf("1") }
     var inputUnit by remember { mutableStateOf(Meters) }
-
     var outputUnit by remember { mutableStateOf(Feet) }
-    var expendOutput by remember { mutableStateOf(false) }
     val inputValueDouble = inputValue.toDoubleOrNull() ?: 0.0
     val outputValueDouble = convertLength(inputValueDouble, inputUnit, outputUnit)
 
-    val formulaMessage = if (inputValue.isNotEmpty()) {
-        try {
-            val formula = getFormula(1.0, inputUnit, outputUnit)
-            "1 ${inputUnit.name.lowercase()} = $formula ${outputUnit.name.lowercase()}"
-        } catch (e: NumberFormatException) {
-            "Invalid input value"
-        }
-    } else {
-        "Please enter a value to convert"
+    val formulaMessage =  try {
+        val formula = getFormula(1.0, inputUnit, outputUnit)
+        "1 ${inputUnit.name.lowercase()} = $formula ${outputUnit.name.lowercase()}"
+    } catch (e: NumberFormatException) {
+        "Invalid input value"
     }
 
     Column(
@@ -75,7 +74,12 @@ fun LengthCalculatorScreen(modifier: Modifier, onBackPress: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(Modifier.height(16.dp))
-        AppImage(modifier = Modifier.size(120.dp), R.drawable.length_converter)
+        AppImage(
+            modifier = Modifier.size(100.dp),
+            R.drawable.length_converter,
+            animatedVisibilityScope,
+            sharedTransitionScope,
+        )
 
         Spacer(modifier = Modifier.height(30.dp))
         Row(
@@ -176,10 +180,18 @@ private fun IncreaseDecreaseIconButton(
     )
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun PreviewLengthCalculatorScreen() {
-    LengthCalculatorScreen(Modifier.fillMaxSize()) {}
+//    SharedTransitionLayout() {
+//        LengthCalculatorScreen(
+//            this,
+//            animatedVisibilityScope = this,
+//            Modifier.fillMaxSize(),
+//            {}
+//        )
+//    }
 }
 
 private fun convertLength(value: Double, fromUnit: LengthUnit, toUnit: LengthUnit): Double {

@@ -1,4 +1,4 @@
-package com.example.speedometerapp.screen.ElectricityConverter
+package com.example.speedometerapp.screen.electricityConverter
 
 enum class ChargeUnit(val displayName: String, val toCoulomb: Double) {
     Coulomb("coulomb [C]", 1.0),

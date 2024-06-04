@@ -1,4 +1,4 @@
-package com.example.speedometerapp.screen.SpeedoMeter
+package com.example.speedometerapp.screen.speedoMeter
 
 enum class Speed(val value: Int) {
     SPEED_0(0),

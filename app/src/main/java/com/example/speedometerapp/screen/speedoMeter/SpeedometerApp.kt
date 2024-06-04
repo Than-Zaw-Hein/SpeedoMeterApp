@@ -1,10 +1,10 @@
-package com.example.speedometerapp.screen.SpeedoMeter
+package com.example.speedometerapp.screen.speedoMeter
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -33,10 +33,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -52,9 +50,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.speedometerapp.screen.SpeedoMeter.Speed
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -62,8 +58,12 @@ import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun SpeedometerApp(modifier: Modifier, onBackPress: () -> Unit) {
+fun SpeedometerApp(
+    modifier: Modifier,
+    onBackPress: () -> Unit,
+) {
     BackHandler { onBackPress() }
 
     val viewModel = remember { SpeedometerViewModel() }
@@ -329,8 +329,14 @@ class SpeedometerViewModel {
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Preview(showBackground = true)
 @Composable
 fun previewSpeedoMeter() {
-    SpeedometerApp(Modifier.fillMaxSize()) {}
+//    SharedTransitionLayout() {
+//        SpeedometerApp(
+//            modifier = Modifier.fillMaxSize(),
+//            animatedVisibilityScope = this,
+//            onBackPress = {})
+//    }
 }

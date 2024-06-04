@@ -1,7 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.24"
+    alias(libs.plugins.kotlin.serialization)
+    id("kotlinx-serialization")
 }
 
 android {
@@ -62,14 +63,11 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.accompanist.navigation.material)
 
-    val navigationVersion = "2.8.0-alpha08"
-    val navigation = "androidx.navigation:navigation-compose:$navigationVersion"
-    implementation(navigation)
 
-    val serializationVersion = "1.6.3"
-    val serialization =
-        "org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion"
-    implementation(serialization)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.compose.animation)
+    implementation(libs.kotlinx.serialization.json)
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -78,4 +76,6 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+
 }

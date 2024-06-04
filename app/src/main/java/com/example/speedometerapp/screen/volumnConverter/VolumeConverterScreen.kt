@@ -1,6 +1,10 @@
-package com.example.speedometerapp.screen.ElectricityConverter
+package com.example.speedometerapp.screen.volumnConverter
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -36,17 +40,35 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.speedometerapp.R
+import com.example.speedometerapp.screen.volumnConverter.VolumeUnit.Companion.fromSymbol
 import com.example.speedometerapp.ui.composable.AppImage
 
+
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun ElectricityConverterScreen(modifier: Modifier = Modifier, onBackPress: () -> Unit) {
+fun VolumeConverterScreen(
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    modifier: Modifier = Modifier,
+    onBackPress: () -> Unit
+) {
+
+
     BackHandler { onBackPress() }
 
     var inputValue by remember { mutableStateOf("1") }
-    var inputUnit by remember { mutableStateOf(ChargeUnit.Coulomb) }
-    var outputUnit by remember { mutableStateOf(ChargeUnit.Kilocoulomb) }
+    var inputUnit by remember { mutableStateOf<VolumeUnit>(VolumeUnit.LITER) }
+
+    var outputUnit by remember { mutableStateOf<VolumeUnit>(VolumeUnit.BARREL_DRY_US) }
     val inputValueDouble = inputValue.toDoubleOrNull() ?: 0.0
-    val outputValueDouble = convertCharge(inputValueDouble, inputUnit, outputUnit)
+    val outputValueDouble = getFormula(inputValueDouble, inputUnit, outputUnit)
+
+    val formulaMessage =try {
+        val formula = getFormula(1.0, inputUnit, outputUnit)
+        "1 ${inputUnit.symbol.lowercase()} = $formula ${outputUnit.symbol.lowercase()}"
+    } catch (e: NumberFormatException) {
+        "Invalid input value"
+    }
 
     Column(
         modifier = modifier
@@ -55,12 +77,15 @@ fun ElectricityConverterScreen(modifier: Modifier = Modifier, onBackPress: () ->
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(Modifier.height(16.dp))
-        AppImage(modifier = Modifier.size(120.dp), image = R.drawable.electricity_converter)
+        AppImage(
+            modifier = Modifier.size(100.dp),
+            image = R.drawable.volume_converter,
+            animatedVisibilityScope = animatedVisibilityScope,
+            sharedTransitionScope = sharedTransitionScope
+        )
         Spacer(modifier = Modifier.height(30.dp))
-
         Row(
-            Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             OutlinedTextField(
                 modifier = Modifier.weight(1f),
@@ -74,43 +99,37 @@ fun ElectricityConverterScreen(modifier: Modifier = Modifier, onBackPress: () ->
             OutlinedTextField(
                 modifier = Modifier.weight(1f),
                 value = outputValueDouble.toString(),
-                onValueChange = {},
-                enabled = false,
+                onValueChange = {},singleLine = true,
+                maxLines = 1,
                 label = { Text(text = "Output Value") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
         }
         Row(modifier = Modifier.fillMaxWidth()) {
-            UnitSelector(
-                modifier = Modifier.weight(1f),
-                unit = inputUnit.displayName,
+            VolumeSelector(modifier = Modifier.weight(1f),
+                unit = inputUnit.symbol,
                 onUnitChange = { newUnit ->
-                    inputUnit = ChargeUnit.values().first { it.displayName == newUnit }
-                }
-            )
+                    inputUnit = fromSymbol(newUnit)
+                })
             Text("=", style = MaterialTheme.typography.headlineLarge)
-            UnitSelector(
-                modifier = Modifier.weight(1f),
-                unit = outputUnit.displayName,
+            VolumeSelector(modifier = Modifier.weight(1f),
+                unit = outputUnit.symbol,
                 onUnitChange = { newUnit ->
-                    outputUnit = ChargeUnit.entries.first { it.displayName == newUnit }
-                }
-            )
+                    outputUnit = fromSymbol(newUnit)
+                })
         }
-
         Spacer(modifier = Modifier.height(12.dp))
+        Text(text = formulaMessage, style = MaterialTheme.typography.bodyLarge)
     }
+
 }
 
-
 @Composable
-fun UnitSelector(
-    modifier: Modifier = Modifier,
-    unit: String,
-    onUnitChange: (String) -> Unit
+private fun VolumeSelector(
+    modifier: Modifier = Modifier, unit: String, onUnitChange: (String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val units = ChargeUnit.values().map { it.displayName }
+    val units = VolumeUnit.entries.map { it.symbol }
 
     ElevatedCard(modifier = modifier, shape = RoundedCornerShape(4.dp)) {
         Row(
@@ -120,8 +139,8 @@ fun UnitSelector(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
+                expanded = expanded, onDismissRequest = { expanded = false },
+                modifier = Modifier.height(300.dp)
             ) {
                 units.forEach { unit ->
                     DropdownMenuItem(onClick = {
@@ -155,8 +174,14 @@ private fun IncreaseDecreaseIconButton(
     )
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+private fun getFormula(value: Double = 1.0, fromUnit: VolumeUnit, toUnit: VolumeUnit): Double {
+    return value * (fromUnit.conversionFactor / toUnit.conversionFactor)
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Preview
 @Composable
-private fun PreviewElectricityConverterScreen() {
-    ElectricityConverterScreen(Modifier.fillMaxSize()) {}
+fun VolumeConverterScreenPreview() {
+//    SharedTransitionLayout { VolumeConverterScreen(this, this, Modifier.fillMaxSize(), {}) }
+
 }

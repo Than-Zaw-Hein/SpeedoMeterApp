@@ -1,14 +1,13 @@
-package com.example.speedometerapp.screen.MaterialColorPicker
+package com.example.speedometerapp.screen.materialColorPicker
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.Image
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,52 +16,46 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.speedometerapp.R
-import com.example.speedometerapp.screen.SpeedoMeter.SpeedometerApp
 import com.example.speedometerapp.ui.composable.AppImage
 import kotlin.math.roundToInt
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun MaterialColorPickerScreen(onBackPress: () -> Unit) {
+fun MaterialColorPickerScreen(
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    sharedTransitionScope: SharedTransitionScope,
+    onBackPress: () -> Unit
+) {
     BackHandler { onBackPress() }
     ColorPicker(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(), sharedTransitionScope, animatedVisibilityScope,
     )
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun ColorPicker(modifier: Modifier) {
+fun ColorPicker(
+    modifier: Modifier,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+) {
     var alpha by rememberSaveable { mutableFloatStateOf(1f) }
     var red by rememberSaveable { mutableFloatStateOf(0f) }
     var green by rememberSaveable { mutableFloatStateOf(0f) }
@@ -70,15 +63,18 @@ fun ColorPicker(modifier: Modifier) {
 
     val hexColor = toHexColor(alpha, red, green, blue)
     val color = Color(red, green, blue, alpha)
-
     LazyColumn(
         modifier = modifier.padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-
         item {
-            AppImage(modifier = Modifier, R.drawable.material_color_picker)
+            AppImage(
+                modifier = Modifier.size(100.dp),
+                R.drawable.material_color_picker,
+                animatedVisibilityScope = animatedVisibilityScope,
+                sharedTransitionScope = sharedTransitionScope
+            )
         }
         item {
             // Display the current color in a Box with a MaterialTheme shape
@@ -93,15 +89,14 @@ fun ColorPicker(modifier: Modifier) {
             )
         }
         item {
-            ElevatedCard(
+            Box(
                 modifier = Modifier
                     .padding(10.dp, 0.dp)
                     .fillMaxWidth()
-                    .height(80.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = color
-                )
-            ) {}
+                    .height(80.dp)
+                    .background(color),
+
+                ) {}
         }
         itemsIndexed(
             listOf(
@@ -170,8 +165,9 @@ fun toHexColor(alpha: Float, red: Float, green: Float, blue: Float): String {
 }
 
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Preview(showBackground = true)
 @Composable
 fun previewSpeedoMeter() {
-    MaterialColorPickerScreen { }
+//    SharedTransitionLayout() { MaterialColorPickerScreen(this, { }) }
 }
