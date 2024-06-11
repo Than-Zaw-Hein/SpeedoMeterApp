@@ -53,6 +53,11 @@ data class VolumeConverterRoute(
     val name: String = "VolumeConverter"
 ) : AppRoute
 
+@Serializable
+data class DataTransferRateConverterRoute(
+    val name: String = "DataTransferRateConverter"
+) : AppRoute
+
 @Composable
 fun NavBackStackEntry?.currentRoute(): AppRoute? {
     return when (this?.destination?.route) {
@@ -62,6 +67,7 @@ fun NavBackStackEntry?.currentRoute(): AppRoute? {
         MaterialColorPickerRoute().toString() -> MaterialColorPickerRoute()
         ElectricityConverterRoute().toString() -> ElectricityConverterRoute()
         VolumeConverterRoute().toString() -> VolumeConverterRoute()
+        DataTransferRateConverterRoute().toString() -> DataTransferRateConverterRoute()
         else -> DashboardRoute
     }
 }

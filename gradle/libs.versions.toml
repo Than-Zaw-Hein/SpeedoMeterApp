@@ -1,6 +1,6 @@
 [versions]
 accompanistNavigationMaterial = "0.26.5-rc"
-agp = "8.6.0-alpha03"
+agp = "8.6.0-alpha04"
 animation = "1.7.0-beta02"
 kotlin = "1.9.24"
 kotlinxSerializationJson = "1.6.3"

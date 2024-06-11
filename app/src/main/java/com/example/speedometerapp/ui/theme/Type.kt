@@ -18,7 +18,7 @@ val Typography = Typography(
     headlineLarge = TextStyle(
         fontFamily = FontFamily.SansSerif,
         fontWeight = FontWeight.Normal,
-        fontSize = 32.sp,
+        fontSize = 28.sp,
         lineHeight = 40.0.sp,
         color = PrimaryColor
     )

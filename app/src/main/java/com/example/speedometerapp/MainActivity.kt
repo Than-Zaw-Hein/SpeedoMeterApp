@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.speedometerapp.screen.dataTransferRateConverter.DataTransferRateConverterScreen
 import com.example.speedometerapp.screen.electricityConverter.ElectricityConverterScreen
 import com.example.speedometerapp.screen.lengthCalculator.LengthCalculatorScreen
 import com.example.speedometerapp.screen.materialColorPicker.MaterialColorPickerScreen
@@ -252,6 +253,17 @@ fun MyNavHost(
                     }
                 }
             }
+            composable<DataTransferRateConverterRoute> {
+                onCurrentScreenChange(Screen.DataTransferRateConverter)
+                DataTransferRateConverterScreen(
+                    animatedVisibilityScope = this,
+                    sharedTransitionScope = this@SharedTransitionLayout
+                ) {
+                    if (!this@SharedTransitionLayout.isTransitionActive) {
+                        navController.navigateUp()
+                    }
+                }
+            }
         }
     }
 }
@@ -344,6 +356,11 @@ enum class Screen(@DrawableRes open val image: Int, open val text: String, val m
     VolumeConverter(
         image = R.drawable.volume_converter,
         text = "Volume Converter", VolumeConverterRoute()
-    )
+    ),
+    DataTransferRateConverter(
+        image = R.drawable.data_transfer,
+        text = "DTR Converter",
+        DataTransferRateConverterRoute()
+    );
 
 }
